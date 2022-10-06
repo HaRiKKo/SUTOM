@@ -1,4 +1,2 @@
 # SUTOM
 Microservices Project
-
-test 

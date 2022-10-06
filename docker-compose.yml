@@ -1,0 +1,26 @@
+version: "3.3"
+
+services:
+
+  interface:
+    image: nocodb/nocodb
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+    restart: always
+    volumes:
+      - nc_data:/usr/app/data
+    environment:
+      NC_DB: pg://host.docker.internal:5432?u=user&p=password&d=sutom
+
+  db:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: user
+      POSTGRES_DB: sutom
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data:rw
