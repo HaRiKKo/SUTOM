@@ -17,7 +17,7 @@ Thanks to this API we can handle several user. The API will store the statistics
 
 ## About the Architecture
 
-![alt text](Architecture_diagram2.png)
+![alt text](Architecture_diagram.png)
 Architecture of our application. 
 
 # How RUN the Project ?
