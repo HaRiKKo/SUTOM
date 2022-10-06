@@ -88,7 +88,6 @@ fs.readFile(path, (err, data) => {
         console.table(stat)
         res.send(send);
         })
-        
         app.get('/stat', (req, res) => {
             console.table(stat)
             res.send(stat);
