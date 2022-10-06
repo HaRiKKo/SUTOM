@@ -1,5 +1,6 @@
 # SUTOM
-Microservices Project
+Microservices Project by CHEVRIER CHhléo and MAURICE Ambre.
+
 The main rule is to find the word with the least try. 
 
 # The SUTOM architecture.
