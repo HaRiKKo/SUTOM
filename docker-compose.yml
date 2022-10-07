@@ -2,25 +2,16 @@ version: "3.3"
 
 services:
 
-  interface:
-    image: nocodb/nocodb
+  sutom:
+    image: chleo/sutom:latest
     ports:
-      - 8080:8080
+      - 3000:3000
     depends_on:
-      - db
-    restart: always
-    volumes:
-      - nc_data:/usr/app/data
-    environment:
-      NC_DB: pg://host.docker.internal:5432?u=user&p=password&d=sutom
+      - score
 
-  db:
-    image: postgres
-    environment:
-      POSTGRES_PASSWORD: password
-      POSTGRES_USER: user
-      POSTGRES_DB: sutom
+  score:
+    image: chleo/score:latest
     ports:
-      - 5432:5432
-    volumes:
-      - postgres_data:/var/lib/postgresql/data:rw
+      - 5000:5000
+
+    

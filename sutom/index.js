@@ -18,7 +18,7 @@ app.get('/', (req, res) => {
 
 fs.readFile(path, (err, data) => {
         if (err) throw err;
-        var localStorage = new LocalStorage('./storage'); 
+        var localStorage = new LocalStorage('../score/storage'); 
         var words = data.toString().split("\n");
         var d = new Date();
         d.setHours(0)
@@ -28,7 +28,7 @@ fs.readFile(path, (err, data) => {
         var num_mot = d.getTime()%nbr_mots;
         //initialise la variable qui stock les statistiques du joueur 
         if((localStorage.getItem(0)) === null){
-            var stat = {
+            var stat = { 
                 'nbWords': 0,
                 'average': 0,
                 'try':0
@@ -49,37 +49,37 @@ fs.readFile(path, (err, data) => {
             data=words[num_mot]
             word=req.query.mot
             console.log("le mot à trouver", data);
-                console.log("le mot donner", word);
-                var data_array=data.split('');
-                data_array.pop();
-                var word_array=word.split('');
-                var data_array2 = data_array.slice();
-                console.log("le tableau à trouver", data_array);
-                console.log("le tableau donner", word_array);
-                if(word_array.length!=data_array.length){
-                  res.send("Le mot est de taille "+ data_array.length+ "<br>");
-                    return false
+            console.log("le mot donner", word);
+            var data_array=data.split('');
+            data_array.pop();
+            var word_array=word.split('');
+            var data_array2 = data_array.slice();
+            console.log("le tableau à trouver", data_array);
+            console.log("le tableau donner", word_array);
+            if(word_array.length!=data_array.length){
+                res.send("Le mot est de taille "+ data_array.length+ "<br>");
+                return false
+            }
+            for (let i = 0; i < data_array.length; i++) {
+                let e = data_array2[i];
+                if(e==word_array[i]){
+                    data_array2[i]="0";
                 }
-                for (let i = 0; i < data_array.length; i++) {
-                    let e = data_array2[i];
-                    if(e==word_array[i]){
-                        data_array2[i]="0";
-                    }
-                }
-                var send="";
-                console.log(data_array2);
-                for (let i = 0; i < data_array.length; i++) {
-                    let e = word_array[i];
-                    if(e==data_array[i]){
-                        send+="<span style='background-color:green;'>"+e+"|</span>";
-                    } else if (data_array2.includes(e)) {
-                        send+="<span style='background-color:orange;'>"+e+"|</span>";
-                        data_array2[data_array2.indexOf(e)]="0";
-                    } else {
-                        send+="<span style='background-color:red;'>"+e+"|</span>";
-                    } 
-                }
-                send+="<br>";
+            }
+            var send="";
+            console.log(data_array2);
+            for (let i = 0; i < data_array.length; i++) {
+                let e = word_array[i];
+                if(e==data_array[i]){
+                    send+="<span style='background-color:green;'>"+e+"|</span>";
+                } else if (data_array2.includes(e)) {
+                    send+="<span style='background-color:orange;'>"+e+"|</span>";
+                    data_array2[data_array2.indexOf(e)]="0";
+                } else {
+                    send+="<span style='background-color:red;'>"+e+"|</span>";
+                } 
+            }
+            send+="<br>";
             if(JSON.stringify(data_array)===JSON.stringify(word_array)){
                 stat.nbWords+=1 //update le nombre de mot trouver
                 stat.try+=1
@@ -91,10 +91,6 @@ fs.readFile(path, (err, data) => {
         localStorage.setItem(0, JSON.stringify(stat));
         console.log("Update the items Stat");
         res.send(send);
-        })
-        app.get('/stat', (req, res) => {
-            console.table(stat)
-            res.send(stat);
         })
 })
 
