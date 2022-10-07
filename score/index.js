@@ -13,6 +13,7 @@ const nbr_mots = 22740
 app.use(express.static('public'))
 
 app.get('/stat', (req, res) => {
+    var localStorage = new LocalStorage('../score/storage')
     stat=JSON.parse((localStorage.getItem(0)))
     console.table(stat)
     res.send(stat);
