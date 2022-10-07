@@ -27,18 +27,21 @@ fs.readFile(path, (err, data) => {
         d.setMilliseconds(0)
         var num_mot = d.getTime()%nbr_mots;
         //initialise la variable qui stock les statistiques du joueur 
-        if(typeof stat == 'undefined'){
+        if((localStorage.getItem(0)) === null){
             var stat = {
                 'nbWords': 0,
                 'average': 0,
                 'try':0
             }
            //sessionStorage.setItem(0, stat);
-           localStorage.setItem(0, stat);
+           localStorage.setItem(0, JSON.stringify(stat));
+           console.log("Set the items Stat");
         } else {
             //stat=sessionStorage.getItem(0);
-            stat=localStorage.getItem(0);
+            stat=JSON.parse((localStorage.getItem(0)));
+            console.log("Get the items Stat");
         }
+        console.log("type of stat",typeof stat)
         app.get("/size", (req, res)=> {
             res.send(String((words[num_mot].length)-1));
         })
@@ -85,7 +88,8 @@ fs.readFile(path, (err, data) => {
             } else {
                 stat.try+=1 //update le nombre d'essaie sur le mot en cours
             }
-        console.table(stat)
+        localStorage.setItem(0, JSON.stringify(stat));
+        console.log("Update the items Stat");
         res.send(send);
         })
         app.get('/stat', (req, res) => {
