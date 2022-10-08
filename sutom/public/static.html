@@ -7,7 +7,12 @@
     </head>
     <body>
         <div> <h> Bienvenue dans SUTOM ta mère! </h> <br> Essayer de deviner le mot ! </div>
-        <a href="/score.html">Aller voir mon score.</a>
+        <!--
+        <form id="score" action="#">
+            <input type="submit" value="Aller voir mon score.">
+        </form>
+        -->
+        <a href="http://localhost:5000/score.html">Aller voir mon score.</a>
         <div id="taille">
             
         </div>
@@ -19,14 +24,20 @@
         <div id="essaie">
 
         </div>
-    </body>
+    </body> 
     <script>
 
         $(document).ready(function(event){
             $.get('/size', (data)=> {
                 $("#taille").append("Le mot est de taille ", data);
             })
-        });
+        })
+
+        /*
+        $("#score").submit(function(event){
+            fetch("localhost:5000/score.html")
+        }) 
+        */
 
         $("#form").submit(function(event){
             event.preventDefault();
@@ -34,6 +45,6 @@
             $.get('/mots?mot='+word, (data)=> {
                 $("#essaie").append(data);
             })
-        }); 
+        }) 
     </script>
 </html>

@@ -17,7 +17,12 @@
     </head>
     <body>
         <div> <h> Bienvenue sur le page de score ! </h> <br> Retrouver vos statistiques ici ! </div>
-        <a href="/static.html">Aller jouer.</a>
+        <!--
+        <form id="static" action="#">
+            <input type="submit" value="Aller jouer.">
+        </form>
+        -->
+        <a href="http://localhost:3000/static.html">Aller jouer.</a>
         <table>
             <thead>
                 <tr>
@@ -50,12 +55,18 @@
         </table>
     </body>
     <script>
+        /*
+        $("#static").submit(function(event){
+            fetch("localhost:3000/static.html")
+        }) 
+        */
+
         $(document).ready(function(event){
             $.get('/stat', (data)=> {
                 $("#nbWords").append(data.nbWords);
                 $("#average").append(data.average);
             })
-        });
+        })
         
     </script>
 </html>
