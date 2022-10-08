@@ -10,7 +10,7 @@ const port = process.env.PORT || 5000
 const path = "data/liste_francais_utf8.txt"
 const nbr_mots = 22740
 
-app.use(express.static('../public'))
+app.use(express.static('./public'))
 
 app.get('/stat', (req, res) => {
     var localStorage = new LocalStorage('/storage')
