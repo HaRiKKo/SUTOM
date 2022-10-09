@@ -1,5 +1,5 @@
 {
-    "name": "sutom",
+    "name": "score",
     "version": "1.0.0",
     "description": "TD2 - SUTOM",
     "main": "index.js",
@@ -16,5 +16,5 @@
       "node-sessionstorage": "^1.0.0",
       "os": "^0.1.2"
     }
-  }
+}
   

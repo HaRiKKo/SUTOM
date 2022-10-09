@@ -1,6 +1,6 @@
 FROM node:16
 
-WORKDIR /SUTOM
+WORKDIR /SCORE
 
 COPY package*.json ./
 
@@ -14,26 +14,7 @@ CMD [ "node", "index.js" ]
 
 # docker :
 
-# - des images
-
-# - des containers
-
-# - des volumes
-
-
-# image -> état initial d'un programme
-
-# image : {
-#         /server/index.js
-#         /server/package.json
-#         /server/data/
-#         /server/public/...
-#         /MapData/
-        
-#         ADD VOLUME toto
-# } 
-
-# containers :
+# - des imagesdock
 #     une image qui est lancé -> peut-être différent de l'état initial
 
 

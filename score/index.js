@@ -12,9 +12,22 @@ const nbr_mots = 22740
 
 app.use(express.static('./public'))
 
+app.get('/', (req, res) => {
+    res.send('Hello World!')
+  })
+  
 app.get('/stat', (req, res) => {
-    var localStorage = new LocalStorage('/storage')
+    var localStorage = new LocalStorage('./storage')
     stat=JSON.parse((localStorage.getItem(0)))
     console.table(stat)
     res.send(stat)
+})
+
+app.get('/port', (req,res) => {
+    var name = os.hostname()
+    res.send("MOTUS APP working on "+name+" port "+port)
+})
+
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`)
 })
