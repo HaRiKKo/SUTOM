@@ -1,6 +1,7 @@
 const express = require('express')
 const fs = require('fs')
 const os = require('node:os')
+const http = require('http');
 //const sessionStorage = require('node-sessionstorage')
 const {LocalStorage} = require("node-localstorage")
 const app = express()
@@ -18,7 +19,6 @@ app.get('/', (req, res) => {
 
 fs.readFile(path, (err, data) => {
         if (err) throw err;
-        var localStorage = new LocalStorage('../score/storage'); 
         var words = data.toString().split("\n");
         var d = new Date();
         d.setHours(0)
@@ -26,22 +26,6 @@ fs.readFile(path, (err, data) => {
         d.setSeconds(0)
         d.setMilliseconds(0)
         var num_mot = d.getTime()%nbr_mots;
-        //initialise la variable qui stock les statistiques du joueur 
-        if((localStorage.getItem(0)) === null){
-            var stat = { 
-                'nbWords': 0,
-                'average': 0,
-                'try':0
-            }
-           //sessionStorage.setItem(0, stat);
-           localStorage.setItem(0, JSON.stringify(stat));
-           console.log("Set the items Stat");
-        } else {
-            //stat=sessionStorage.getItem(0);
-            stat=JSON.parse((localStorage.getItem(0)));
-            console.log("Get the items Stat");
-        }
-        console.log("type of stat",typeof stat)
         app.get("/size", (req, res)=> {
             res.send(String((words[num_mot].length)-1));
         })
@@ -80,17 +64,14 @@ fs.readFile(path, (err, data) => {
                 } 
             }
             send+="<br>";
-            if(JSON.stringify(data_array)===JSON.stringify(word_array)){
-                stat.nbWords+=1 //update le nombre de mot trouver
-                stat.try+=1
-                stat.average = (stat.try)/stat.nbWords //update la moyenne des essaies
-    
-            } else {
-                stat.try+=1 //update le nombre d'essaie sur le mot en cours
-            }
-        localStorage.setItem(0, JSON.stringify(stat));
-        console.log("Update the items Stat");
-        res.send(send);
+            http.get("http://score:5000/update?id=0&find="+(JSON.stringify(data_array)==JSON.stringify(word_array)))
+            .on("error", (err) => {
+                console.log("Error: " + err.message);
+                res.send("Une erreur est survenue lors du traitement de votre mot, nous sommes désolé du dérangement");
+              })
+              .on('response', () => {
+                res.send(send)
+              });;
         })
 })
 
@@ -102,3 +83,33 @@ app.get('/port', (req,res) => {
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
+
+
+        /*var localStorage = new LocalStorage('../score/storage'); 
+        //initialise la variable qui stock les statistiques du joueur 
+        if((localStorage.getItem(0)) === null){
+            var stat = { 
+                'nbWords': 0,
+                'average': 0,
+                'try':0
+            }
+           //sessionStorage.setItem(0, stat);
+           localStorage.setItem(0, JSON.stringify(stat));
+           console.log("Set the items Stat");
+        } else {
+            //stat=sessionStorage.getItem(0);
+            stat=JSON.parse((localStorage.getItem(0)));
+            console.log("Get the items Stat");
+        }
+        console.log("type of stat",typeof stat)*/
+
+           /* if(JSON.stringify(data_array)===JSON.stringify(word_array)){
+                stat.nbWords+=1 //update le nombre de mot trouver
+                stat.try+=1
+                stat.average = (stat.try)/stat.nbWords //update la moyenne des essaies
+    
+            } else {
+                stat.try+=1 //update le nombre d'essaie sur le mot en cours
+            }*/
+        /*localStorage.setItem(0, JSON.stringify(stat));
+        console.log("Update the items Stat");*/

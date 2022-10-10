@@ -6,7 +6,6 @@ services:
     image: chleo/sutom:latest
     ports:
       - 3000:3000
-
   score:
     image: chleo/score:latest
     ports:
