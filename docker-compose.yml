@@ -10,5 +10,12 @@ services:
     image: chleo/score:latest
     ports:
       - 5000:5000
+    volumes:
+      - storageScore:/SCORE/storage
+  login:
+    image: chleo/login:latest
+    ports:
+      - 8000:8000
 
-    
+volumes:
+  storageScore:

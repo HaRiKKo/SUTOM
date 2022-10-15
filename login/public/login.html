@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head> 
+        <!-- localhost:[PORT]/static.html -->
+        <title>SUTOM ta mère</title>
+        <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+    </head>
+    <body>
+        <div> <h> Bienvenue sur SUTOM ta mère ! </h> <br> Page de connexion ! </div>
+        <a href="http://localhost:8000/register.html">Je n'ai pas de compte.</a>
+        <form id="form" action="#">
+            <input id="login" name="login" type="text"><br>
+            <input id="psw" name="psw" type="password"><br>
+            <input type="submit" value="Connexion">
+        </form>
+        <div id="info">
+
+        </div>
+    </body>
+    <script>
+
+        $("#form").submit(function(event){
+            event.preventDefault();
+            var login = $("#login").val();
+            var psw = $("#psw").val();
+            $.get('/login?login='+login+'&psw='+psw, (data)=> {
+                $("#info").append(data);
+            })
+        }) 
+        
+    </script>
+</html>

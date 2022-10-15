@@ -1,23 +1,21 @@
 const express = require('express')
 const fs = require('fs')
 const os = require('node:os')
-const http = require('http');
+const http = require('http')
+const path = require('path');
 //const sessionStorage = require('node-sessionstorage')
 const {LocalStorage} = require("node-localstorage")
 const app = express()
 //PORT=5000 node index.js // commande utiliser pour lancé l'app sur le port 5000
 const port = process.env.PORT || 3000 
 //const port = 5000
-const path = "data/liste_francais_utf8.txt"
+const pathdata = "data/liste_francais_utf8.txt"
 const nbr_mots = 22740
 
-app.use(express.static('./public'));
+app.set("view engine", "pug");
+app.set("views", path.join(__dirname, "views"));
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
-
-fs.readFile(path, (err, data) => {
+fs.readFile(pathdata, (err, data) => {
         if (err) throw err;
         var words = data.toString().split("\n");
         var d = new Date();
@@ -26,9 +24,15 @@ fs.readFile(path, (err, data) => {
         d.setSeconds(0)
         d.setMilliseconds(0)
         var num_mot = d.getTime()%nbr_mots;
-        app.get("/size", (req, res)=> {
-            res.send(String((words[num_mot].length)-1));
+
+
+
+
+        app.get("/", (req, res) => {
+            res.render("index", {size : (words[num_mot].length)-1})
         })
+        
+
         app.get('/mots', (req, res) => {
             data=words[num_mot]
             word=req.query.mot
@@ -71,9 +75,51 @@ fs.readFile(path, (err, data) => {
               })
               .on('response', () => {
                 res.send(send)
-              });;
+              })
         })
 })
+
+app.get("/score", (req, res)=>{
+    http.get('http://score:5000/stat?id=0', (resp) => {
+        let data = '';
+        resp.on('data', (chunk) => {
+            data += chunk;
+        });
+        resp.on('end', () => {
+            data = JSON.parse(data)
+            res.render("score", {stat : {nbWords : data.nbWords, average : data.average}})
+        })
+    })
+    .on("error", (err) => {
+        console.log("Error: " + err.message);
+        res.send("Une erreur est survenue lors du traitement de votre mot, nous sommes désolé du dérangement");
+      })
+})
+
+
+app.use((req,res,next)=>{
+    next()
+    // if(req.session && req.session.user || req.url == "/login.html"){
+    //     console.log("ok")
+    //   next()
+    // }else{
+    //     console.log("KO")
+    //     res.redirect("/login.html") http://login:8000 ???
+    // }
+  })
+  
+  
+// app.get('/id', (req, res) => {
+//     http.get("http://login:8000/id")
+//             .on("error", (err) => {
+//                 console.log("Error: " + err.message);
+//                 res.send("Une erreur est survenue lors du traitement de votre requête, nous sommes désolé du dérangement");
+//               })
+//             .on('response', (id) => {
+//                 console.log("id: "+id);
+//                 res.send(id);
+//               })
+// })
 
 app.get('/port', (req,res) => {
     var name = os.hostname()
@@ -83,33 +129,3 @@ app.get('/port', (req,res) => {
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
-
-
-        /*var localStorage = new LocalStorage('../score/storage'); 
-        //initialise la variable qui stock les statistiques du joueur 
-        if((localStorage.getItem(0)) === null){
-            var stat = { 
-                'nbWords': 0,
-                'average': 0,
-                'try':0
-            }
-           //sessionStorage.setItem(0, stat);
-           localStorage.setItem(0, JSON.stringify(stat));
-           console.log("Set the items Stat");
-        } else {
-            //stat=sessionStorage.getItem(0);
-            stat=JSON.parse((localStorage.getItem(0)));
-            console.log("Get the items Stat");
-        }
-        console.log("type of stat",typeof stat)*/
-
-           /* if(JSON.stringify(data_array)===JSON.stringify(word_array)){
-                stat.nbWords+=1 //update le nombre de mot trouver
-                stat.try+=1
-                stat.average = (stat.try)/stat.nbWords //update la moyenne des essaies
-    
-            } else {
-                stat.try+=1 //update le nombre d'essaie sur le mot en cours
-            }*/
-        /*localStorage.setItem(0, JSON.stringify(stat));
-        console.log("Update the items Stat");*/

@@ -1,0 +1,29 @@
+html
+    head 
+        title SUTOM ta mère
+        | <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+    body
+        div
+            h Bienvenue dans SUTOM ta mère!
+                br 
+                | Essayer de deviner le mot !
+        
+        a(href='/score') Aller voir mon score.
+        
+        p Le mot est de taille #{size} !
+
+        form(id="form", action="#")
+            input(id="mot" name="mot" type="text")
+            input(type="submit" value="Valide")
+
+        
+        div(id="essaie")
+            
+    script.
+        $("#form").submit(function(event){
+            event.preventDefault();
+            var word = $("#mot").val();
+            $.get('/mots?mot='+word, (data)=> {
+                $("#essaie").append(data);
+            })
+        }) 

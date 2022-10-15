@@ -1,6 +1,7 @@
 const express = require('express')
 const fs = require('fs')
 const os = require('node:os')
+const http = require('http');
 //const sessionStorage = require('node-sessionstorage')
 const {LocalStorage} = require("node-localstorage")
 const app = express()
@@ -17,10 +18,11 @@ app.get('/', (req, res) => {
   })
   
 app.get('/stat', (req, res) => {
-    var localStorage = new LocalStorage('./storage')
-    stat=JSON.parse((localStorage.getItem(0)))
-    console.table(stat)
-    res.send(stat)
+  var id=req.query.id
+  var localStorage = new LocalStorage('./storage')
+  stat=JSON.parse((localStorage.getItem(id)))
+  console.table(stat)// c'est ca les null je crois !!!
+  res.send(stat)
 })
 
 app.get('/update', (req,res) => {
@@ -47,6 +49,19 @@ app.get('/update', (req,res) => {
   console.log("Update the items Stat")
   res.send("end")
 })
+
+
+// app.get('/connect', (req, res, next) => {
+//   console.log("test session")
+//   if(req.session.user){
+//     console.log("session exist in score")
+//     next()
+//   }else{
+//     console.log("session not exist in score")
+//     res.redirect("http://localhost:8000/login.html") 
+//   }
+// })
+
 
 app.get('/port', (req,res) => {
     var name = os.hostname()
