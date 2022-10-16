@@ -12,8 +12,31 @@ const port = process.env.PORT || 3000
 const pathdata = "data/liste_francais_utf8.txt"
 const nbr_mots = 22740
 
-app.set("view engine", "pug");
-app.set("views", path.join(__dirname, "views"));
+var cookieParser = require('cookie-parser');
+app.use(cookieParser());
+
+app.set("view engine", "pug")
+app.set("views", path.join(__dirname, "views"))
+
+
+app.use((req,res,next)=>{
+    console.log("cookies : " + JSON.stringify(req.cookies))
+    customfetch('http://login:8000/retrieveUser', (data) => {
+            console.log("session info", data)
+            data = JSON.parse(data)
+
+            if(data.loggedIn != false || req.url == "http://localhost:8000/login.html"){
+                console.log("ok")
+                next()
+            }else{
+                console.log("KO")
+                res.redirect("http://localhost:8000/login.html")
+            }
+        }, () => {
+            console.log("Error: " + err.message);
+            res.send("Une erreur est survenue lors du traitement de votre mot, nous sommes désolé du dérangement");
+        })
+  })
 
 fs.readFile(pathdata, (err, data) => {
         if (err) throw err;
@@ -26,12 +49,10 @@ fs.readFile(pathdata, (err, data) => {
         var num_mot = d.getTime()%nbr_mots;
 
 
-
-
         app.get("/", (req, res) => {
             res.render("index", {size : (words[num_mot].length)-1})
         })
-        
+
 
         app.get('/mots', (req, res) => {
             data=words[num_mot]
@@ -68,59 +89,27 @@ fs.readFile(pathdata, (err, data) => {
                 } 
             }
             send+="<br>";
-            http.get("http://score:5000/update?id=0&find="+(JSON.stringify(data_array)==JSON.stringify(word_array)))
-            .on("error", (err) => {
+            customfetch("http://score:5000/update?id=0&find="+(JSON.stringify(data_array)==JSON.stringify(word_array)), 
+            (data) => res.send(send),
+            () => {
                 console.log("Error: " + err.message);
                 res.send("Une erreur est survenue lors du traitement de votre mot, nous sommes désolé du dérangement");
-              })
-              .on('response', () => {
-                res.send(send)
-              })
+            })
         })
 })
 
 app.get("/score", (req, res)=>{
-    http.get('http://score:5000/stat?id=0', (resp) => {
-        let data = '';
-        resp.on('data', (chunk) => {
-            data += chunk;
-        });
-        resp.on('end', () => {
+    customfetch(
+        'http://score:5000/stat?id=0', 
+        (data) => {
             data = JSON.parse(data)
             res.render("score", {stat : {nbWords : data.nbWords, average : data.average}})
-        })
-    })
-    .on("error", (err) => {
-        console.log("Error: " + err.message);
-        res.send("Une erreur est survenue lors du traitement de votre mot, nous sommes désolé du dérangement");
+        }, () => {
+            console.log("Error: " + err.message);
+            res.send("Une erreur est survenue lors du traitement de votre mot, nous sommes désolé du dérangement");
       })
 })
-
-
-app.use((req,res,next)=>{
-    next()
-    // if(req.session && req.session.user || req.url == "/login.html"){
-    //     console.log("ok")
-    //   next()
-    // }else{
-    //     console.log("KO")
-    //     res.redirect("/login.html") http://login:8000 ???
-    // }
-  })
   
-  
-// app.get('/id', (req, res) => {
-//     http.get("http://login:8000/id")
-//             .on("error", (err) => {
-//                 console.log("Error: " + err.message);
-//                 res.send("Une erreur est survenue lors du traitement de votre requête, nous sommes désolé du dérangement");
-//               })
-//             .on('response', (id) => {
-//                 console.log("id: "+id);
-//                 res.send(id);
-//               })
-// })
-
 app.get('/port', (req,res) => {
     var name = os.hostname()
     res.send("MOTUS APP working on "+name+" port "+port)
@@ -129,3 +118,18 @@ app.get('/port', (req,res) => {
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
+
+customfetch = (url, callbackOK, callbackError) => {
+    http.get(url, (resp) => {
+        let data = '';
+        resp.on('data', (chunk) => {
+            data += chunk;
+        })
+        resp.on('end', () => {
+            callbackOK(data)
+        })
+    })
+    .on("error", (err) => {
+        callbackError()
+      })
+}
