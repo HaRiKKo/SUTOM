@@ -28,21 +28,32 @@ app.use(session({
     } 
 }))
 
-app.get("/retrieveUser", (req, res) => {
-    console.log("cookies : " + JSON.stringify(req.cookies))
-    if(req.session.loggedIn){
-        res.json({"loggedIn":req.session.loggedIn,"user":req.session.user,"name":req.session.name})
-    } else {
-        res.json({"loggedIn":false})
-    }
-    //return json of the session
+// app.get("/retrieveUser", (req, res) => {
+//     console.log("cookies : " + JSON.stringify(req.cookies))
+//     if(req.session.loggedIn){
+//         res.json({"loggedIn":req.session.loggedIn,"user":req.session.user,"name":req.session.name})
+//     } else {
+//         res.json({"loggedIn":false})
+//     }
+//     //return json of the session
 
-    //si pas co "false"
-})
+//     //si pas co "false"
+// })
 /*
 motus -> retrieveUser -> false -> login
                       -> != false -> do an action
 */
+
+function makeid(length) {
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}
+
 app.get('/register', (req, res) => {
     var reg = req.query.reg
     var psw = req.query.psw
@@ -60,7 +71,8 @@ app.get('/register', (req, res) => {
         req.session.name=user.id
         console.log("Création d'un nouveau user")
         console.table(user)
-        res.send("<br> Création d'un nouveau user. </br>")
+        token = makeid(30)
+        res.send({"token": token, "redirect_url": req.session.redirect_url})
     } else { //si le compte exite déjà
         res.send("<br> Pseudo ou Mot de passe déjà éxistant. </br>")
     }
@@ -83,8 +95,19 @@ app.get('/login', (req, res) => {
         req.session.loggedIn=true
         req.session.user=login
         req.session.name=JSON.parse(localStorage.getItem(login)).id
-        res.send("<br> Connexion terminer. </br>")
+        token = makeid(30)
+        res.send({"token": token, "redirect_url": req.session.redirect_url})
     }
+})
+
+app.get("/authorize", (req, res)=>{
+    if(req.query.clientId == '42' && req.query.scope != undefined && req.query.redirect_url == 'http://localhost:3000/resultLogin'){
+        req.session.redirect_url = req.query.redirect_url
+        res.redirect("/login.html")
+    } else {
+        res.send("error client")
+    }
+    
 })
 
 app.get("/test", (req, res) => {

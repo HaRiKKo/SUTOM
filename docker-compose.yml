@@ -16,6 +16,9 @@ services:
     image: chleo/login:latest
     ports:
       - 8000:8000
+    volumes:
+      - storageLogin:/LOGIN/storage
 
 volumes:
   storageScore:
+  storageLogin:

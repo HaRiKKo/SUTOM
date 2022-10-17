@@ -12,16 +12,53 @@ const port = process.env.PORT || 3000
 const pathdata = "data/liste_francais_utf8.txt"
 const nbr_mots = 22740
 
+
+// MOTUS -> user se co : logged -> rien faire sinon demander de se co avec :
+//     - Discord
+//     - Google
+//     - Ton truc.
+
+//     clientId = MOTUSId ----------------------------------> Que google / discord connait avant
+//     scope : permission ? demande spécifique -> discord 
+//     redirecturl    <-------------------------------------- ?token=blablabla
+//       /\                                                 /\
+//       ||                                                 ||   
+// motus -> LoginApp/authorize -> LoginApp : login/register -> motus
+
+
 var cookieParser = require('cookie-parser');
-app.use(cookieParser());
+app.use(cookieParser())
 
 app.set("view engine", "pug")
 app.set("views", path.join(__dirname, "views"))
 
+//MOTUS -> /login/authorize?redict=MOTUSURL -> login / register -> redirigé vers MOTUSURL (redict) avec le token en kdo en plus -> sur les cookies du client
+
+//client > MOTUS (token dans cookie) > /login/retrieveUser?token=value > résultat
 
 app.use((req,res,next)=>{
     console.log("cookies : " + JSON.stringify(req.cookies))
-    customfetch('http://login:8000/retrieveUser', (data) => {
+    
+    if(req.cookies.token || req.url.includes("/resultLogin")){
+        console.log("ok")
+        next()
+    }else{
+        console.log("KO")
+        res.redirect("http://localhost:8000/authorize?clientId=42&scope=plouf&redirect_url=http://localhost:3000/resultLogin")
+    }
+})
+
+app.get("/resultLogin", (req,res) => {
+    token=req.query.token
+    res.cookie("token", token, {
+        maxAge: 1000 * 60 * 15, // would expire after 15 minutes
+        httpOnly: true, // The cookie only accessible by the web server
+    })
+    console.log("cookies : " + JSON.stringify(req.cookies))
+    res.redirect("http://localhost:3000/")
+})
+
+    /*customfetch('http://login:8000/retrieveUser', (data) => {
             console.log("session info", data)
             data = JSON.parse(data)
 
@@ -36,7 +73,7 @@ app.use((req,res,next)=>{
             console.log("Error: " + err.message);
             res.send("Une erreur est survenue lors du traitement de votre mot, nous sommes désolé du dérangement");
         })
-  })
+  })*/
 
 fs.readFile(pathdata, (err, data) => {
         if (err) throw err;

@@ -24,7 +24,12 @@
             var login = $("#login").val();
             var psw = $("#psw").val();
             $.get('/login?login='+login+'&psw='+psw, (data)=> {
-                $("#info").append(data);
+                if(data.token!=undefined){
+                    window.location.replace(data.redirect_url+"?token="+data.token)
+                } else {
+                    $("#info").append(data);
+                }
+                
             })
         }) 
         
