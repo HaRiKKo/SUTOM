@@ -2,23 +2,65 @@ html
     head 
         title SUTOM ta mère
         | <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+        style
+            include ../static/style.css
     body
-        div
-            h Bienvenue dans SUTOM ta mère!
-                br 
-                | Essayer de deviner le mot !
-        
-        a(href='/score') Aller voir mon score.
-        
-        p Le mot est de taille #{size} !
+        div(id=conteneur-site)
+            nav 
+                a(id="nav-element" href='/score') Mon score
+                h SUTOM 
+                    i ta mère
+                p(id="nav-element") login
 
-        form(id="form", action="#")
-            input(id="mot" name="mot" type="text")
-            input(type="submit" value="Valide")
+            div(id="main")
+                div
+                    h Bienvenue dans SUTOM ta mère!
+                        br 
+                        | Essayez de deviner le mot !
+                
+                
+                
+                p Le mot est de taille #{size} !
 
-        
-        div(id="essaie")
+                div(id="grille")
+                    table(id="jeu-grille")
+
+                        tr(class="grille-ligne")
+                        tr(class="grille-ligne")
+                        tr(class="grille-ligne")
+                        tr(class="grille-ligne")
+                        tr(class="grille-ligne")
+                        tr(class="grille-ligne")
+
+                        script. 
+                            //let motATrouver = #{data};
+                            //console.log(motATrouver);
+                            let longueurMot = #{size};
+                            let nombreDeLigne = document.getElementsByClassName('grille-ligne');
+                            let nombreDeColonne = longueurMot;
+                            for (var i = 1; i <= nombreDeLigne.length ; i++) {
+                                for (var j = 1; j <= nombreDeColonne ; j++) {
+                                    var tag = document.createElement("td");
+                                    var text = document.createTextNode(".");
+                                    tag.appendChild(text);
+                                    var element = document.getElementsByClassName('grille-ligne')[i-1];
+                                    element.appendChild(tag);
+                                }
+
+                            }
+
+                form(id="form", action="#")
+                    input(id="mot" name="mot" type="text")
+                    input(id="bouton" type="submit" value="Valide")
+
+                
+                div(id="essaie")
             
+            footer
+                p Copyright | octobre 2022
+                p by CHEVRIER Chléo and MAURICE Ambre
+                img(src='/sutom/static/CY_Tech.png' alt="CY Tech")
+                
     script.
         $("#form").submit(function(event){
             event.preventDefault();

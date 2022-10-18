@@ -26,8 +26,6 @@ fs.readFile(pathdata, (err, data) => {
         var num_mot = d.getTime()%nbr_mots;
 
 
-
-
         app.get("/", (req, res) => {
             res.render("index", {size : (words[num_mot].length)-1})
         })
