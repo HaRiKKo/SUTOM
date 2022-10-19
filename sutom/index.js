@@ -110,8 +110,9 @@ fs.readFile(pathdata, (err, data) => {
             var data_array2 = data_array.slice();
             console.log("le tableau à trouver", data_array);
             console.log("le tableau donner", word_array);
+            
             if(word_array.length!=data_array.length){
-                res.send("Le mot est de taille "+ data_array.length+ "<br>");
+                //res.send("Le mot est de taille "+ data_array.length+ "<br>");
                 return false
             }
             for (let i = 0; i < data_array.length; i++) {
@@ -122,18 +123,24 @@ fs.readFile(pathdata, (err, data) => {
             }
             var send="";
             console.log(data_array2);
+            send+="<tr>";
             for (let i = 0; i < data_array.length; i++) {
                 let e = word_array[i];
+
                 if(e==data_array[i]){
-                    send+="<span style='background-color:green;'>"+e+"|</span>";
+                    // send+="<span style='background-color:green;'>"+e+"|</span>";
+                    send+="<td style='background-color:green;'>"+e+"</td>";
                 } else if (data_array2.includes(e)) {
-                    send+="<span style='background-color:orange;'>"+e+"|</span>";
+                    // send+="<span style='background-color:orange;'>"+e+"|</span>";
+                    send+="<td style='background-color:orange;'>"+e+"</td>";
                     data_array2[data_array2.indexOf(e)]="0";
                 } else {
-                    send+="<span style='background-color:red;'>"+e+"|</span>";
-                } 
+                    // send+="<span style='background-color:red;'>"+e+"|</span>";
+                    send+="<td style='background-color: #192218'>"+e+"</td>";
+                }
             }
-            send+="<br>";
+            send+="</tr>";
+            //send+="<br>";
             customfetch("http://score:5000/update?id=0&find="+(JSON.stringify(data_array)==JSON.stringify(word_array)), 
             (data) => res.send(send),
             () => {

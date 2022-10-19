@@ -5,15 +5,14 @@ body{
     margin: 0;
     padding: 0;
     color: #f3f7f3;
+    
 }
 
 #conteneur-page{
     display: flex;
     flex-direction: column;
-    margin-left: 25%;
-    margin-right: 25%;
     justify-content: space-between;
-    height: 100%;
+    height: 100vh;
 }
 
 nav{
@@ -53,15 +52,27 @@ a{
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    flex-grow:1;
     align-items: center;
+    margin-left: 25%;
+    margin-right: 25%;
     gap: 10px;
     font-size: 26px;
+
+}
+
+#blankspace{
+    display: flex;
+    justify-content: space-between;
+    flex-grow:10;
+    align-items: center;
 }
 
 table{
     background-color: #192218;
     border-collapse: collapse;
     border-spacing: 0;
+    margin-bottom: 1em;
 }
 
 td{
@@ -91,8 +102,6 @@ table,tr,td{
 }
 
 #bouton:hover{
-    /* background-color: transparent; */
-    /* background-color: #445e41; */
     border-color: #f3f7f3;
 }
 
