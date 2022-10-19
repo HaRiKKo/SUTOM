@@ -55,7 +55,15 @@ app.get("/resultLogin", (req,res) => {
         httpOnly: true, // The cookie only accessible by the web server
     })
     console.log("cookies : " + JSON.stringify(req.cookies))
-    res.redirect("http://localhost:3000/")
+    customfetch(
+        'http://login:8000/token?token='+token, 
+        (data) => {
+            console.log(JSON.stringify(data))
+            res.redirect("http://localhost:3000/")
+        }, () => {
+            console.log("Error: " + err.message);
+            res.send("Une erreur est survenue lors du traitement de votre mot, nous sommes désolé du dérangement");
+      })
 })
 
     /*customfetch('http://login:8000/retrieveUser', (data) => {

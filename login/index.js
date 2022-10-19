@@ -4,6 +4,7 @@ const os = require('node:os')
 const session = require('express-session')
 //const sessionStorage = require('node-sessionstorage')
 const {LocalStorage} = require("node-localstorage")
+const ExpiryMap = require("map-expire/MapExpire")
 const app = express()
 //PORT=5000 node index.js // commande utiliser pour lancé l'app sur le port 5000
 const port = process.env.PORT || 8000 
@@ -11,6 +12,7 @@ const port = process.env.PORT || 8000
 const path = "data/liste_francais_utf8.txt"
 const nbr_mots = 22740
 const expiryDate = new Date(Date.now() + 60 * 60 * 1000) // 1 hour
+const tokenMap = new ExpiryMap([],{duration:1000 * 60 * 15})
 
 
 var cookieParser = require('cookie-parser');
@@ -72,6 +74,7 @@ app.get('/register', (req, res) => {
         console.log("Création d'un nouveau user")
         console.table(user)
         token = makeid(30)
+        tokenMap.set(token, {'id':user.id, 'name':reg})
         res.send({"token": token, "redirect_url": req.session.redirect_url})
     } else { //si le compte exite déjà
         res.send("<br> Pseudo ou Mot de passe déjà éxistant. </br>")
@@ -96,6 +99,7 @@ app.get('/login', (req, res) => {
         req.session.user=login
         req.session.name=JSON.parse(localStorage.getItem(login)).id
         token = makeid(30)
+        tokenMap.set(token, {'id':JSON.parse(localStorage.getItem(login)).id, 'name':login})
         res.send({"token": token, "redirect_url": req.session.redirect_url})
     }
 })
@@ -117,6 +121,15 @@ app.get("/test", (req, res) => {
         res.send("session "+JSON.stringify(req.session))
     } else {
         res.send("non")
+    }
+})
+
+app.get("/token", (req, res)=>{
+    const userInfo = tokenMap.get(req.query.token)
+    if(userInfo != undefined){
+        res.send(userInfo)
+    }else{
+        res.send(false)
     }
 })
 
