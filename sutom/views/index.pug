@@ -10,13 +10,13 @@ html
                 a(id="nav-element" href='/score') Mon score
                 h SUTOM 
                     i ta mère
-                p(id="nav-element") login
+                a(id="nav-element" href='/logout') Logout
 
             div(id="main")
                 div
-                    h Bienvenue dans SUTOM ta mère!
+                    h Bienvenue dans SUTOM ta mère! #{user}
                         br 
-                        | Essayez de deviner le mot !
+                        | Essayez de deviner le mot ! #{user}
                 
                 p Le mot est de taille #{size} !
 
