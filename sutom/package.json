@@ -18,6 +18,8 @@
     "node-sessionstorage": "^1.0.0",
     "openid-client": "^5.1.10",
     "os": "^0.1.2",
-    "pug": "^3.0.2"
+    "pug": "^3.0.2",
+    "winston": "^3.8.2",
+    "winston-loki": "^6.0.6"
   }
 }

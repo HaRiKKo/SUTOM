@@ -14,6 +14,24 @@ const pathdata = "data/liste_francais_utf8.txt"
 const nbr_mots = 22740
 const expiryDate = new Date(Date.now() + 60 * 60 * 1000) // 1 hour
 
+const loki_uri = process.env.LOKI || "http://127.0.0.1:3100";
+
+
+const { createLogger, transports } = require("winston");
+const LokiTransport = require("winston-loki");
+const options = {
+  transports: [
+    new LokiTransport({
+      host: loki_uri
+    })
+  ]
+}
+
+const logger = createLogger({
+    level: 'info',
+    options
+})
+
 
 
 // MOTUS -> user se co : logged -> rien faire sinon demander de se co avec :
@@ -51,6 +69,7 @@ app.set("views", path.join(__dirname, "views"))
 //client > MOTUS (token dans cookie) > /login/retrieveUser?token=value > résultat
 
 app.use((req,res,next)=>{
+    logger.info({ message: 'URL '+req.url , labels: { 'url': req.url } })
     //console.log("cookies : " + JSON.stringify(req.cookies))
     if(req.cookies.token || req.url.includes("/resultLogin")){
         console.log("ok")

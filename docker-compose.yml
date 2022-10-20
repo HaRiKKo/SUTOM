@@ -3,22 +3,46 @@ version: "3.3"
 services:
 
   sutom:
+    build: ./sutom/
     image: chleo/sutom:latest
     ports:
       - 3000:3000
   score:
+    build: ./score/
     image: chleo/score:latest
     ports:
       - 5000:5000
     volumes:
       - storageScore:/SCORE/storage
   login:
+    build: ./login/
     image: chleo/login:latest
     ports:
       - 8000:8000
     volumes:
       - storageLogin:/LOGIN/storage
 
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - 3200:3000
+    restart: unless-stopped
+    networks:
+      - monitor-net
+
+  loki:
+    image: grafana/loki
+    container_name: loki
+    ports:
+      - 3100:3100
+    restart: unless-stopped
+    networks:
+      - monitor-net
+
 volumes:
   storageScore:
   storageLogin:
+
+networks:
+  monitor-net:
