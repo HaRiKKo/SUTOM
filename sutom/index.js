@@ -54,7 +54,6 @@ app.use((req,res,next)=>{
     //console.log("cookies : " + JSON.stringify(req.cookies))
     if(req.cookies.token || req.url.includes("/resultLogin")){
         console.log("ok")
-        console.log("le user",req.session.user)
         next()
     }else{
         console.log("KO")
@@ -147,7 +146,7 @@ fs.readFile(pathdata, (err, data) => {
         })
 })
 
-app.get("/score", (req, res)=>{
+app.get("/score", (req, res)=> {
     customfetch(
         'http://score:5000/stat?id='+req.session.user.id, 
         (data) => {
@@ -157,6 +156,11 @@ app.get("/score", (req, res)=>{
             console.log("Error: " + err.message);
             res.send("Une erreur est survenue lors du traitement de votre mot, nous sommes désolé du dérangement");
       })
+})
+
+app.get("/logout", (req, res)=> {
+    req.session.user=undefined
+    res.redirect("http://localhost:8000/authorize?clientId=42&scope=plouf&redirect_url=http://localhost:3000/resultLogin")
 })
   
 app.get('/port', (req,res) => {
