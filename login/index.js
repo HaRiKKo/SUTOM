@@ -14,12 +14,13 @@ const nbr_mots = 22740
 const expiryDate = new Date(Date.now() + 60 * 60 * 1000) // 1 hour
 const tokenMap = new ExpiryMap([],{duration:1000 * 60 * 15})
 
-
 var cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
+
 app.set('trust proxy', 1) 
 app.use(express.static('./public'))
+// app.use(express.static('./static'))
 app.use(session({
     secret: 'secret',
     resave: false,

@@ -4,17 +4,37 @@
         <!-- localhost:[PORT]/static.html -->
         <title>SUTOM ta mère</title>
         <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+        <link rel = "stylesheet" type="text/css" href="./css/login.css">
     </head>
     <body>
-        <div> <h> Bienvenue sur SUTOM ta mère ! </h> <br> Page de connexion ! </div>
-        <a href="http://localhost:8000/register.html">Je n'ai pas de compte.</a>
-        <form id="form" action="#">
-            <input id="login" name="login" type="text"><br>
-            <input id="psw" name="psw" type="password"><br>
-            <input type="submit" value="Connexion">
-        </form>
-        <div id="info">
+        <div id="conteneur-page">
+            <nav>
+                <p></p>
+                <h1>SUTOM <i>ta mère</i> </h1>
+                <p></p>
+            </nav>
 
+            <div id="main">
+                <div> <h> Bienvenue sur SUTOM ta mère ! </h> <br> Page de connexion ! </div>
+                <a href="http://localhost:8000/register.html">Je n'ai pas de compte.</a>
+                <form id="form" action="#">
+                    <input id="login" name="login" type="text"><br>
+                    <input id="psw" name="psw" type="password"><br>
+                    <input id="bouton" type="submit" value="Connexion">
+                </form>
+                <div id="info">
+
+                </div>
+            </div>
+
+            <div id="blankspace"></div> 
+                
+            
+            <footer>
+                <p> Copyright | octobre 2022 </p>
+                <p> by CHEVRIER Chléo and MAURICE Ambre </p>
+                <p> CY Tech </p>
+            </footer>
         </div>
     </body>
     <script>
