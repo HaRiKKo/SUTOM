@@ -1,4 +1,5 @@
 const express = require('express')
+const session = require('express-session')
 const fs = require('fs')
 const os = require('node:os')
 const http = require('http')
@@ -11,6 +12,8 @@ const port = process.env.PORT || 3000
 //const port = 5000
 const pathdata = "data/liste_francais_utf8.txt"
 const nbr_mots = 22740
+const expiryDate = new Date(Date.now() + 60 * 60 * 1000) // 1 hour
+
 
 
 // MOTUS -> user se co : logged -> rien faire sinon demander de se co avec :
@@ -29,6 +32,17 @@ const nbr_mots = 22740
 var cookieParser = require('cookie-parser');
 app.use(cookieParser())
 
+app.set('trust proxy', 1) 
+app.use(session({
+    secret: 'secret',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        httpOnly: true,
+        expires: expiryDate
+    } 
+}))
+
 app.set("view engine", "pug")
 app.set("views", path.join(__dirname, "views"))
 
@@ -37,10 +51,10 @@ app.set("views", path.join(__dirname, "views"))
 //client > MOTUS (token dans cookie) > /login/retrieveUser?token=value > résultat
 
 app.use((req,res,next)=>{
-    console.log("cookies : " + JSON.stringify(req.cookies))
-    
+    //console.log("cookies : " + JSON.stringify(req.cookies))
     if(req.cookies.token || req.url.includes("/resultLogin")){
         console.log("ok")
+        console.log("le user",req.session.user)
         next()
     }else{
         console.log("KO")
@@ -54,34 +68,19 @@ app.get("/resultLogin", (req,res) => {
         maxAge: 1000 * 60 * 15, // would expire after 15 minutes
         httpOnly: true, // The cookie only accessible by the web server
     })
-    console.log("cookies : " + JSON.stringify(req.cookies))
+    console.log("token : " + JSON.stringify(token))
     customfetch(
         'http://login:8000/token?token='+token, 
         (data) => {
-            console.log(JSON.stringify(data))
+            //console.log("cookies : " + JSON.stringify(req.cookies))
+            console.log("userdata:",data)
+            req.session.user=JSON.parse(data)
             res.redirect("http://localhost:3000/")
         }, () => {
             console.log("Error: " + err.message);
             res.send("Une erreur est survenue lors du traitement de votre mot, nous sommes désolé du dérangement");
       })
 })
-
-    /*customfetch('http://login:8000/retrieveUser', (data) => {
-            console.log("session info", data)
-            data = JSON.parse(data)
-
-            if(data.loggedIn != false || req.url == "http://localhost:8000/login.html"){
-                console.log("ok")
-                next()
-            }else{
-                console.log("KO")
-                res.redirect("http://localhost:8000/login.html")
-            }
-        }, () => {
-            console.log("Error: " + err.message);
-            res.send("Une erreur est survenue lors du traitement de votre mot, nous sommes désolé du dérangement");
-        })
-  })*/
 
 fs.readFile(pathdata, (err, data) => {
         if (err) throw err;
@@ -95,7 +94,12 @@ fs.readFile(pathdata, (err, data) => {
 
 
         app.get("/", (req, res) => {
-            res.render("index", {size : (words[num_mot].length)-1})
+            console.table(req.session)
+            if(req.session.user==undefined){
+                res.redirect("http://localhost:8000/authorize?clientId=42&scope=plouf&redirect_url=http://localhost:3000/resultLogin")
+            } else {
+                res.render("index", {size : (words[num_mot].length)-1, user: req.session.user.name})
+            }
         })
 
 
@@ -134,7 +138,7 @@ fs.readFile(pathdata, (err, data) => {
                 } 
             }
             send+="<br>";
-            customfetch("http://score:5000/update?id=0&find="+(JSON.stringify(data_array)==JSON.stringify(word_array)), 
+            customfetch("http://score:5000/update?id="+req.session.user.id+"&find="+(JSON.stringify(data_array)==JSON.stringify(word_array)), 
             (data) => res.send(send),
             () => {
                 console.log("Error: " + err.message);
@@ -145,10 +149,10 @@ fs.readFile(pathdata, (err, data) => {
 
 app.get("/score", (req, res)=>{
     customfetch(
-        'http://score:5000/stat?id=0', 
+        'http://score:5000/stat?id='+req.session.user.id, 
         (data) => {
             data = JSON.parse(data)
-            res.render("score", {stat : {nbWords : data.nbWords, average : data.average}})
+            res.render("score", {stat : {nbWords : data.nbWords, average : data.average}, user: req.session.user.name})
         }, () => {
             console.log("Error: " + err.message);
             res.send("Une erreur est survenue lors du traitement de votre mot, nous sommes désolé du dérangement");

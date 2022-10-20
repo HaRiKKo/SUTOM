@@ -20,7 +20,15 @@ app.get('/', (req, res) => {
 app.get('/stat', (req, res) => {
   var id=req.query.id
   var localStorage = new LocalStorage('./storage')
-  stat=JSON.parse((localStorage.getItem(id)))
+  if((localStorage.getItem(id)) === null){
+    var stat = { 
+        'nbWords': 0,
+        'average': 0,
+        'try':0
+    }
+  } else {
+    stat=JSON.parse((localStorage.getItem(id)))
+  }
   console.table(stat)// c'est ca les null je crois !!!
   res.send(stat)
 })

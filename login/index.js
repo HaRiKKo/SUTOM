@@ -1,19 +1,18 @@
 const express = require('express')
 const fs = require('fs')
 const os = require('node:os')
+const bcrypt = require('bcrypt');
 const session = require('express-session')
-//const sessionStorage = require('node-sessionstorage')
 const {LocalStorage} = require("node-localstorage")
 const ExpiryMap = require("map-expire/MapExpire")
+
 const app = express()
-//PORT=5000 node index.js // commande utiliser pour lancé l'app sur le port 5000
 const port = process.env.PORT || 8000 
-//const port = 5000
 const path = "data/liste_francais_utf8.txt"
 const nbr_mots = 22740
 const expiryDate = new Date(Date.now() + 60 * 60 * 1000) // 1 hour
 const tokenMap = new ExpiryMap([],{duration:1000 * 60 * 15})
-
+const saltRounds = 10;
 
 var cookieParser = require('cookie-parser');
 app.use(cookieParser());
@@ -59,12 +58,14 @@ function makeid(length) {
 app.get('/register', (req, res) => {
     var reg = req.query.reg
     var psw = req.query.psw
-    console.log('try to register at '+reg+' with the password '+psw)
+    //hash le psw
+    const hash = bcrypt.hashSync(psw, saltRounds);
+    console.log('try to register at '+reg)
 
     var localStorage = new LocalStorage('./storage')
     if((localStorage.getItem(reg))===null){ // vérifer si le compte n'existe pas, puis le crée 
         var user = {
-            'password': psw,
+            'password': hash, //pas hasher
             'id': localStorage.length
         }
         localStorage.setItem(reg, JSON.stringify(user))
@@ -84,17 +85,21 @@ app.get('/register', (req, res) => {
 app.get('/login', (req, res) => {
     var login = req.query.login
     var psw = req.query.psw
-    console.log('try to connect at '+login+' with the password '+psw)
+    //hash le psw
+    //const hash = bcrypt.hashSync(psw, saltRounds);
+    console.log('try to connect at '+login)
 
     var localStorage = new LocalStorage('./storage')
     if((localStorage.getItem(login))===null){ //Le compte n'existe pas ou mauvais pseudo
         res.send("<br> Pseudo innexistant. </br>")
-    } else if (JSON.parse(localStorage.getItem(login)).password != psw){ //Mauvais mot de passe mais pseudo existant
+        //bcrypt.compareSync(JSON.parse(localStorage.getItem(login)).password, hash);
+    } else if (!bcrypt.compareSync(psw, JSON.parse(localStorage.getItem(login)).password)){ //Mauvais mot de passe mais pseudo existant (psw hasher)
         console.log("Mot de passe incorrect")
         res.send("<br> Mot de passe incorrect. </br>")
         //envoie d'une réponse d'erreur
     } else { //Bon pseudo et mot de passe
         console.log("Connexion terminer")
+        console.table(JSON.parse(localStorage.getItem(login)))
         req.session.loggedIn=true
         req.session.user=login
         req.session.name=JSON.parse(localStorage.getItem(login)).id
@@ -125,7 +130,9 @@ app.get("/test", (req, res) => {
 })
 
 app.get("/token", (req, res)=>{
-    const userInfo = tokenMap.get(req.query.token)
+    userInfo = tokenMap.get(req.query.token)
+    console.log("token : " + JSON.stringify(req.query.token))
+    console.log("userInfo:",userInfo)
     if(userInfo != undefined){
         res.send(userInfo)
     }else{
