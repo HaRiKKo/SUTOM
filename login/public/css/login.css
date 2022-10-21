@@ -1,0 +1,94 @@
+body{
+    font-size: 30px;
+    font-family: "Roboto Medium", Ubuntu, Arial, Helvetica, sans-serif;
+    background-color:  #91b991 ;
+    margin: 0;
+    padding: 0;
+    color: #f3f7f3;
+    
+}
+
+#conteneur-page{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100vh;
+}
+
+nav{
+    /* background-color:  #192218;
+    display: grid;
+    grid-template-columns: 3fr 4fr 3fr;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+    margin-bottom: 0.5em; */
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px;
+    width: 100%;
+    height: 80px;
+    position: relative;
+    box-sizing: border-box;
+    background-color:  #192218;
+    margin-bottom: 1em;
+}
+
+
+#nav-element{
+    display: flex;
+    justify-content: space-around;
+    color: #f3f7f3;
+    font-size: 26px;
+}
+
+a{
+    text-decoration:none;
+}
+
+#main{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-grow:1;
+    align-items: center;
+    margin-left: 25%;
+    margin-right: 25%;
+    gap: 10px;
+    font-size: 26px;
+
+}
+
+#blankspace{
+    display: flex;
+    justify-content: space-between;
+    flex-grow:10;
+    align-items: center;
+}
+
+#bouton{
+    border-radius: 2px;
+    background-color: #192218;
+    border: solid 2px #0a0e0a;
+    color: #f3f7f3;
+    margin-left: 10px;
+    font-size: 15px;
+    padding : 5px;
+    padding-bottom: 2px;
+    /*box-shadow: 0 0 0 2px powderblue;*/
+}
+
+#bouton:hover{
+    border-color: #f3f7f3;
+}
+
+
+footer {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-size: 15px;
+}

@@ -1,6 +1,6 @@
 FROM node:16
 
-WORKDIR /SUTOM
+WORKDIR /LOGIN
 
 COPY package*.json ./
 
@@ -8,5 +8,5 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 5000
+EXPOSE 8000
 CMD [ "node", "index.js" ]
