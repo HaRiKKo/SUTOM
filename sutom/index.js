@@ -4,29 +4,11 @@ const fs = require('fs')
 const os = require('node:os')
 const http = require('http')
 const path = require('path');
-//const sessionStorage = require('node-sessionstorage')
-const {LocalStorage} = require("node-localstorage")
 const app = express()
-//PORT=5000 node index.js // commande utiliser pour lancé l'app sur le port 5000
 const port = process.env.PORT || 3000 
-//const port = 5000
 const pathdata = "data/liste_francais_utf8.txt"
 const nbr_mots = 22740
 const expiryDate = new Date(Date.now() + 60 * 60 * 1000) // 1 hour
-
-
-
-// MOTUS -> user se co : logged -> rien faire sinon demander de se co avec :
-//     - Discord
-//     - Google
-//     - Ton truc.
-
-//     clientId = MOTUSId ----------------------------------> Que google / discord connait avant
-//     scope : permission ? demande spécifique -> discord 
-//     redirecturl    <-------------------------------------- ?token=blablabla
-//       /\                                                 /\
-//       ||                                                 ||   
-// motus -> LoginApp/authorize -> LoginApp : login/register -> motus
 
 
 var cookieParser = require('cookie-parser');
@@ -46,14 +28,9 @@ app.use(session({
 app.set("view engine", "pug")
 app.set("views", path.join(__dirname, "views"))
 
-//MOTUS -> /login/authorize?redict=MOTUSURL -> login / register -> redirigé vers MOTUSURL (redict) avec le token en kdo en plus -> sur les cookies du client
-
-//client > MOTUS (token dans cookie) > /login/retrieveUser?token=value > résultat
-
 app.use((req,res,next)=>{
-    //console.log("cookies : " + JSON.stringify(req.cookies))
     if(req.cookies.token || req.url.includes("/resultLogin")){
-        console.log("ok")
+        console.log("OK")
         next()
     }else{
         console.log("KO")
@@ -71,7 +48,6 @@ app.get("/resultLogin", (req,res) => {
     customfetch(
         'http://login:8000/token?token='+token, 
         (data) => {
-            //console.log("cookies : " + JSON.stringify(req.cookies))
             console.log("userdata:",data)
             req.session.user=JSON.parse(data)
             res.redirect("http://localhost:3000/")
@@ -115,7 +91,6 @@ fs.readFile(pathdata, (err, data) => {
             console.log("le tableau donner", word_array);
             
             if(word_array.length!=data_array.length){
-                //res.send("Le mot est de taille "+ data_array.length+ "<br>");
                 return false
             }
             for (let i = 0; i < data_array.length; i++) {
@@ -131,14 +106,11 @@ fs.readFile(pathdata, (err, data) => {
                 let e = word_array[i];
 
                 if(e==data_array[i]){
-                    // send+="<span style='background-color:green;'>"+e+"|</span>";
                     send+="<td style='background-color:green;'>"+e+"</td>";
                 } else if (data_array2.includes(e)) {
-                    // send+="<span style='background-color:orange;'>"+e+"|</span>";
                     send+="<td style='background-color:orange;'>"+e+"</td>";
                     data_array2[data_array2.indexOf(e)]="0";
                 } else {
-                    // send+="<span style='background-color:red;'>"+e+"|</span>";
                     send+="<td style='background-color: #192218'>"+e+"</td>";
                 }
             }

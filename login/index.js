@@ -1,6 +1,4 @@
 const express = require('express')
-const fs = require('fs')
-const os = require('node:os')
 const bcrypt = require('bcrypt');
 const session = require('express-session')
 const {LocalStorage} = require("node-localstorage")
@@ -21,7 +19,6 @@ app.use(cookieParser());
 
 app.set('trust proxy', 1) 
 app.use(express.static('./public'))
-// app.use(express.static('./static'))
 app.use(session({
     secret: 'secret',
     resave: false,
@@ -31,22 +28,6 @@ app.use(session({
         expires: expiryDate
     } 
 }))
-
-// app.get("/retrieveUser", (req, res) => {
-//     console.log("cookies : " + JSON.stringify(req.cookies))
-//     if(req.session.loggedIn){
-//         res.json({"loggedIn":req.session.loggedIn,"user":req.session.user,"name":req.session.name})
-//     } else {
-//         res.json({"loggedIn":false})
-//     }
-//     //return json of the session
-
-//     //si pas co "false"
-// })
-/*
-motus -> retrieveUser -> false -> login
-                      -> != false -> do an action
-*/
 
 function makeid(length) {
     var result           = '';
@@ -88,18 +69,14 @@ app.get('/register', (req, res) => {
 app.get('/login', (req, res) => {
     var login = req.query.login
     var psw = req.query.psw
-    //hash le psw
-    //const hash = bcrypt.hashSync(psw, saltRounds);
     console.log('try to connect at '+login)
 
     var localStorage = new LocalStorage('./storage')
     if((localStorage.getItem(login))===null){ //Le compte n'existe pas ou mauvais pseudo
         res.send("<br> Pseudo innexistant. </br>")
-        //bcrypt.compareSync(JSON.parse(localStorage.getItem(login)).password, hash);
     } else if (!bcrypt.compareSync(psw, JSON.parse(localStorage.getItem(login)).password)){ //Mauvais mot de passe mais pseudo existant (psw hasher)
         console.log("Mot de passe incorrect")
-        res.send("<br> Mot de passe incorrect. </br>")
-        //envoie d'une réponse d'erreur
+        res.send("<br> Mot de passe incorrect. </br>") //envoie d'une réponse d'erreur
     } else { //Bon pseudo et mot de passe
         console.log("Connexion terminer")
         console.table(JSON.parse(localStorage.getItem(login)))
@@ -120,16 +97,6 @@ app.get("/authorize", (req, res)=>{
         res.send("error client")
     }
     
-})
-
-app.get("/test", (req, res) => {
-    if(req.session.loggedIn){
-        res.send("ok "+JSON.stringify(req.session))
-    } else if (req.session){ 
-        res.send("session "+JSON.stringify(req.session))
-    } else {
-        res.send("non")
-    }
 })
 
 app.get("/token", (req, res)=>{

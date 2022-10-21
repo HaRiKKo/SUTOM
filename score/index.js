@@ -1,15 +1,8 @@
 const express = require('express')
-const fs = require('fs')
 const os = require('node:os')
-const http = require('http');
-//const sessionStorage = require('node-sessionstorage')
 const {LocalStorage} = require("node-localstorage")
 const app = express()
-//PORT=5000 node index.js // commande utiliser pour lancé l'app sur le port 5000
 const port = process.env.PORT || 5000 
-//const port = 5000
-const path = "data/liste_francais_utf8.txt"
-const nbr_mots = 22740
 
 app.use(express.static('./public'))
 
@@ -19,8 +12,8 @@ app.get('/', (req, res) => {
   
 app.get('/stat', (req, res) => {
   var id=req.query.id
-  var localStorage = new LocalStorage('./storage')
-  if((localStorage.getItem(id)) === null){
+  var localStorage = new LocalStorage('./storage')// store the stat in a local storage
+  if((localStorage.getItem(id)) === null){ 
     var stat = { 
         'nbWords': 0,
         'average': 0,
@@ -29,7 +22,7 @@ app.get('/stat', (req, res) => {
   } else {
     stat=JSON.parse((localStorage.getItem(id)))
   }
-  console.table(stat)// c'est ca les null je crois !!!
+  console.table(stat)
   res.send(stat)
 })
 
@@ -57,19 +50,6 @@ app.get('/update', (req,res) => {
   console.log("Update the items Stat")
   res.send("end")
 })
-
-
-// app.get('/connect', (req, res, next) => {
-//   console.log("test session")
-//   if(req.session.user){
-//     console.log("session exist in score")
-//     next()
-//   }else{
-//     console.log("session not exist in score")
-//     res.redirect("http://localhost:8000/login.html") 
-//   }
-// })
-
 
 app.get('/port', (req,res) => {
     var name = os.hostname()
