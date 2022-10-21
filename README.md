@@ -54,3 +54,10 @@ In the root folder you can find the start.sh file. To run the entire project you
 ./start.sh
 ```
 After that you can connect to http://localhost:3000/ in a browser to see the website. 
+
+# Improvement
+
+This is some idea of improvement 
+- Improve the security of the score
+- Add monitoring (grafana, loki...)
+- Add some other plays 
