@@ -3,16 +3,19 @@ version: "3.3"
 services:
 
   sutom:
+    build: ./sutom/
     image: chleo/sutom:latest
     ports:
       - 3000:3000
   score:
+    build: ./score/
     image: chleo/score:latest
     ports:
       - 5000:5000
     volumes:
       - storageScore:/SCORE/storage
   login:
+    build: ./login/
     image: chleo/login:latest
     ports:
       - 8000:8000
